@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, forwardRef } from "react";
 import { motion } from "framer-motion";
 import { useRemixTypes } from "./hooks";
 import type { SearchResult } from "./types";
@@ -12,14 +12,20 @@ interface ExpandedAssetModalProps {
   onRemixMenu?: () => void;
 }
 
-export const ExpandedAssetModal = ({
-  asset,
-  isOpen,
-  onClose,
-  onShowDetails,
-  onRemix,
-  onRemixMenu,
-}: ExpandedAssetModalProps) => {
+export const ExpandedAssetModal = forwardRef<
+  HTMLDivElement,
+  ExpandedAssetModalProps
+>((
+  {
+    asset,
+    isOpen,
+    onClose,
+    onShowDetails,
+    onRemix,
+    onRemixMenu,
+  }: ExpandedAssetModalProps,
+  ref,
+) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const mediaContainerRef = useRef<HTMLDivElement>(null);
   const getRemixTypes = useRemixTypes();
@@ -279,4 +285,4 @@ export const ExpandedAssetModal = ({
       </motion.div>
     </motion.div>
   );
-};
+});
