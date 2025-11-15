@@ -12,17 +12,17 @@ This guide covers deploying the IP Assistant application to Vercel and configuri
 
 The following environment variables must be set in your Vercel project settings. Create them based on `.env.example`:
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `STORY_API_KEY` | ✅ Yes | API key for Story Protocol to fetch IP assets |
-| `VITE_PUBLIC_STORY_RPC` | ✅ Yes | Story Protocol RPC endpoint |
-| `VITE_PUBLIC_SPG_COLLECTION` | ✅ Yes | Story Protocol collection address |
-| `VITE_PRIVY_APP_ID` | ✅ Yes | Privy authentication app ID |
-| `VITE_GUEST_PRIVATE_KEY` | ✅ Yes | Guest wallet private key |
-| `OPENAI_API_KEY` | ✅ Yes | OpenAI API key for image generation |
-| `OPENAI_VERIFIER_MODEL` | ⚠️ Optional | OpenAI model (default: gpt-4o) |
-| `PINATA_JWT` | ✅ Yes | Pinata JWT for IPFS uploads |
-| `PINATA_GATEWAY` | ✅ Yes | Pinata gateway URL |
+| Variable                     | Required    | Purpose                                       |
+| ---------------------------- | ----------- | --------------------------------------------- |
+| `STORY_API_KEY`              | ✅ Yes      | API key for Story Protocol to fetch IP assets |
+| `VITE_PUBLIC_STORY_RPC`      | ✅ Yes      | Story Protocol RPC endpoint                   |
+| `VITE_PUBLIC_SPG_COLLECTION` | ✅ Yes      | Story Protocol collection address             |
+| `VITE_PRIVY_APP_ID`          | ✅ Yes      | Privy authentication app ID                   |
+| `VITE_GUEST_PRIVATE_KEY`     | ✅ Yes      | Guest wallet private key                      |
+| `OPENAI_API_KEY`             | ✅ Yes      | OpenAI API key for image generation           |
+| `OPENAI_VERIFIER_MODEL`      | ⚠️ Optional | OpenAI model (default: gpt-4o)                |
+| `PINATA_JWT`                 | ✅ Yes      | Pinata JWT for IPFS uploads                   |
+| `PINATA_GATEWAY`             | ✅ Yes      | Pinata gateway URL                            |
 
 ## How to Add Environment Variables in Vercel
 
@@ -35,6 +35,7 @@ The following environment variables must be set in your Vercel project settings.
 4. Click **Save**
 
 Example:
+
 ```
 STORY_API_KEY = sk_your_actual_key_here
 VITE_PUBLIC_STORY_RPC = https://aeneid.storyrpc.io
@@ -57,10 +58,12 @@ git push origin main
 ### 2. Connect to Vercel
 
 **Option A: Automatic (Recommended)**
+
 - Push to GitHub/GitLab/Bitbucket
 - Vercel automatically deploys on push to main branch
 
 **Option B: Manual with Vercel CLI**
+
 ```bash
 npm install -g vercel
 vercel
@@ -90,12 +93,14 @@ vercel
 ### Build Fails: "Cannot find module"
 
 **Solution**: Verify all environment variables are set in Vercel settings. The build requires:
+
 - Node version 18+ (automatically selected by Vercel)
 - All environment variables from the table above
 
 ### API Endpoints Return 500 Error
 
 **Solution**: Check environment variables:
+
 1. Go to **Settings** → **Environment Variables** in Vercel
 2. Verify all `STORY_API_KEY` and other API keys are set
 3. Redeploy the project (`git push origin main` or `vercel --prod`)
@@ -103,6 +108,7 @@ vercel
 ### "Server configuration error: STORY_API_KEY not set"
 
 **Solution**:
+
 - Ensure `STORY_API_KEY` is added in Vercel Environment Variables
 - Make sure it's selected for **Production** environment
 - Redeploy after setting the variable
@@ -126,6 +132,7 @@ vercel
 ### "Invalid Ethereum address format"
 
 **Solution**: Ensure wallet address:
+
 - Starts with `0x`
 - Followed by 40 hexadecimal characters
 - Example: `0x1234567890123456789012345678901234567890`
@@ -170,6 +177,7 @@ pnpm build:client && pnpm build:server
 - **Node Version**: 18+ (automatically selected)
 
 This configuration:
+
 - ✅ Builds React client with Vite
 - ✅ Optimizes for production
 - ✅ Handles all API routes via Vercel serverless functions
@@ -179,13 +187,13 @@ This configuration:
 
 All API endpoints are available under `/api/`:
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/check-ip-assets` | POST | Check IP assets by address |
-| `/api/search-ip-assets` | POST | Search IP assets by keyword |
-| `/api/search-by-owner` | POST | Get assets owned by address |
-| `/api/resolve-ip-name` | POST | Resolve .ip domain name |
-| `/api/resolve-owner-domain` | POST | Get domain for owner address |
+| Endpoint                    | Method | Purpose                      |
+| --------------------------- | ------ | ---------------------------- |
+| `/api/check-ip-assets`      | POST   | Check IP assets by address   |
+| `/api/search-ip-assets`     | POST   | Search IP assets by keyword  |
+| `/api/search-by-owner`      | POST   | Get assets owned by address  |
+| `/api/resolve-ip-name`      | POST   | Resolve .ip domain name      |
+| `/api/resolve-owner-domain` | POST   | Get domain for owner address |
 
 ## Security Notes
 
@@ -198,6 +206,7 @@ All API endpoints are available under `/api/`:
 ### CORS & CSP
 
 Default security headers are configured:
+
 - Content-Security-Policy protects against XSS
 - CORS configured for API endpoints
 - Static assets have 1-year cache
@@ -243,19 +252,23 @@ vercel logs [deployment-url]
 ## Support & Resources
 
 ### Story Protocol
+
 - API Documentation: https://api.storyapis.com
 - Support: Story Protocol support team
 
 ### Vercel
+
 - Documentation: https://vercel.com/docs
 - Deployment Guide: https://vercel.com/docs/deployments/overview
 - CLI Reference: https://vercel.com/docs/cli
 
 ### Privy Authentication
+
 - Docs: https://docs.privy.io
 - Support: Privy support team
 
 ### OpenAI
+
 - API Reference: https://platform.openai.com/docs
 - Status: https://status.openai.com
 
