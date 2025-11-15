@@ -4,7 +4,12 @@
   "builds": [
     {
       "src": "dist/spa",
-      "use": "@vercel/static"
+      "use": "@vercel/static",
+      "config": {
+        "maxAge": "1y",
+        "cleanUrls": true,
+        "trailingSlash": false
+      }
     },
     {
       "src": "api/index.ts",
@@ -17,7 +22,18 @@
       "dest": "/api"
     },
     {
-      "src": "^(?!/api)(.*)",
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*\\..*)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
       "dest": "/index.html"
     }
   ]
