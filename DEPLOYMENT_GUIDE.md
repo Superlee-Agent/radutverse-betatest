@@ -5,144 +5,273 @@ This guide covers deploying the IP Assistant application to Vercel and configuri
 ## Prerequisites
 
 - Vercel account (https://vercel.com)
-- Story Protocol API key (obtained from Story Protocol)
 - Git repository connected to Vercel
+- Required API keys (see Environment Variables section)
 
 ## Environment Variables Required
 
-### For Vercel Deployment
+The following environment variables must be set in your Vercel project settings. Create them based on `.env.example`:
 
-Before deploying, you must set the following environment variable in your Vercel project:
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `STORY_API_KEY` | ✅ Yes | API key for Story Protocol to fetch IP assets |
+| `VITE_PUBLIC_STORY_RPC` | ✅ Yes | Story Protocol RPC endpoint |
+| `VITE_PUBLIC_SPG_COLLECTION` | ✅ Yes | Story Protocol collection address |
+| `VITE_PRIVY_APP_ID` | ✅ Yes | Privy authentication app ID |
+| `VITE_GUEST_PRIVATE_KEY` | ✅ Yes | Guest wallet private key |
+| `OPENAI_API_KEY` | ✅ Yes | OpenAI API key for image generation |
+| `OPENAI_VERIFIER_MODEL` | ⚠️ Optional | OpenAI model (default: gpt-4o) |
+| `PINATA_JWT` | ✅ Yes | Pinata JWT for IPFS uploads |
+| `PINATA_GATEWAY` | ✅ Yes | Pinata gateway URL |
 
-#### `STORY_API_KEY` (Required)
-
-- **Purpose**: API key for Story Protocol to fetch IP asset information
-- **Where to get it**: Story Protocol dashboard or your administrator
-- **Format**: Should be a valid API key string
-
-### How to Add Environment Variables in Vercel
+## How to Add Environment Variables in Vercel
 
 1. Go to your Vercel project dashboard
 2. Navigate to **Settings** → **Environment Variables**
-3. Add a new environment variable:
-   - **Name**: `STORY_API_KEY`
-   - **Value**: Your actual API key
+3. Add each variable:
+   - **Name**: Variable name (e.g., `STORY_API_KEY`)
+   - **Value**: Your actual value
    - **Environments**: Select all (Production, Preview, Development)
 4. Click **Save**
 
+Example:
+```
+STORY_API_KEY = sk_your_actual_key_here
+VITE_PUBLIC_STORY_RPC = https://aeneid.storyrpc.io
+VITE_PRIVY_APP_ID = your_privy_id_here
+```
+
 ## Deployment Steps
 
-### 1. Deploy to Vercel
+### 1. Prepare Your Repository
 
 ```bash
-# If using Vercel CLI
-vercel
+# Ensure all changes are committed
+git add .
+git commit -m "Deploy to Vercel"
 
-# Or push to your connected Git repository
+# Push to your main branch
 git push origin main
 ```
 
-### 2. Verify API Key is Set
+### 2. Connect to Vercel
 
-After deployment, verify that the environment variable is correctly set:
+**Option A: Automatic (Recommended)**
+- Push to GitHub/GitLab/Bitbucket
+- Vercel automatically deploys on push to main branch
 
-1. Go to your Vercel project dashboard
-2. Go to **Deployments** and select the latest deployment
-3. Check the **Environment** tab to confirm `STORY_API_KEY` is present
+**Option B: Manual with Vercel CLI**
+```bash
+npm install -g vercel
+vercel
+```
+
+### 3. Set Environment Variables
+
+1. In Vercel dashboard, go to your project
+2. Click **Settings** → **Environment Variables**
+3. Add all required variables from the table above
+4. Save changes
+
+### 4. Trigger Deployment
+
+- If using Git: Push a new commit to main
+- If using Vercel CLI: Run `vercel --prod`
+
+### 5. Verify Deployment
+
+1. Check **Deployments** tab in Vercel dashboard
+2. Click on the latest deployment
+3. Verify the deployment status shows "Ready"
+4. Test the application by visiting the provided URL
 
 ## Troubleshooting
 
-### Issue: "Server configuration error: STORY_API_KEY not set"
+### Build Fails: "Cannot find module"
+
+**Solution**: Verify all environment variables are set in Vercel settings. The build requires:
+- Node version 18+ (automatically selected by Vercel)
+- All environment variables from the table above
+
+### API Endpoints Return 500 Error
+
+**Solution**: Check environment variables:
+1. Go to **Settings** → **Environment Variables** in Vercel
+2. Verify all `STORY_API_KEY` and other API keys are set
+3. Redeploy the project (`git push origin main` or `vercel --prod`)
+
+### "Server configuration error: STORY_API_KEY not set"
 
 **Solution**:
+- Ensure `STORY_API_KEY` is added in Vercel Environment Variables
+- Make sure it's selected for **Production** environment
+- Redeploy after setting the variable
 
-- Verify the environment variable is added in Vercel project settings
-- Redeploy the project after adding the variable
-- Ensure the variable is set for the correct environment (Production, Preview, or Development)
+### "Failed to fetch IP assets from Story API"
 
-### Issue: "Failed to fetch IP assets from Story API"
+**Possible causes & solutions**:
 
-**Possible causes**:
+1. **Invalid API key**
+   - Verify the key is correct in Vercel settings
+   - Test with a known valid key
 
-1. Invalid API key - verify it's correct in Vercel environment settings
-2. Story API is down - check Story Protocol status
-3. Network connectivity issue - check your Vercel region settings
+2. **Story API is down**
+   - Check Story Protocol status: https://api.storyapis.com
+   - Wait and retry deployment
 
-**Solution**:
+3. **Network/Rate limit issues**
+   - Check Vercel build logs: `vercel logs <url>`
+   - Consider rate limiting from Story API
 
-- Check the detailed error message in the browser console
-- Verify API key validity with Story Protocol support
-- Contact Story Protocol support if the API is having issues
+### "Invalid Ethereum address format"
 
-### Issue: "Invalid Ethereum address format"
-
-**Solution**:
-
-- Ensure the wallet address is a valid Ethereum address (starts with 0x, followed by 40 hexadecimal characters)
-- Example valid format: `0x1234567890123456789012345678901234567890`
+**Solution**: Ensure wallet address:
+- Starts with `0x`
+- Followed by 40 hexadecimal characters
+- Example: `0x1234567890123456789012345678901234567890`
 
 ## Local Development
 
-For local development, add the following to your `.env` file (never commit this file):
+### Setup
 
+```bash
+# Install dependencies
+pnpm install
+
+# Create .env file (copy from .env.example)
+cp .env.example .env
+
+# Add your API keys to .env
 ```
-STORY_API_KEY=your_actual_api_key_here
+
+### Development Server
+
+```bash
+# Start local development server
+pnpm dev
+
+# Open http://localhost:8080 in browser
 ```
+
+### Build for Production
+
+```bash
+# Build client only (Vercel's default)
+pnpm build
+
+# Or build everything locally
+pnpm build:client && pnpm build:server
+```
+
+## Build Configuration
+
+- **Build Command**: `npm run build` (builds client only)
+- **Output Directory**: `dist/spa`
+- **Node Version**: 18+ (automatically selected)
+
+This configuration:
+- ✅ Builds React client with Vite
+- ✅ Optimizes for production
+- ✅ Handles all API routes via Vercel serverless functions
+- ✅ Serves static files with proper cache headers
 
 ## API Endpoints
 
-- **Check IP Assets**: `POST /api/check-ip-assets`
-  - Body: `{ address: "0x..." }`
-  - Returns: `{ address, totalCount, originalCount, remixCount }`
+All API endpoints are available under `/api/`:
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/check-ip-assets` | POST | Check IP assets by address |
+| `/api/search-ip-assets` | POST | Search IP assets by keyword |
+| `/api/search-by-owner` | POST | Get assets owned by address |
+| `/api/resolve-ip-name` | POST | Resolve .ip domain name |
+| `/api/resolve-owner-domain` | POST | Get domain for owner address |
 
 ## Security Notes
 
-- Never commit `.env` files to version control
-- Always use Vercel's environment variable system for production secrets
-- API keys should only be used server-side (in the `/api` directory or serverless functions)
+### Environment Variables
 
-## Known Improvements in This Version
+- **Never** commit `.env` files to Git
+- Use Vercel's Environment Variables system for secrets
+- API keys should **only** be used server-side (in `/api` routes)
 
-### Enhanced Error Handling
+### CORS & CSP
 
-- Detailed error messages from Story API are now propagated to the client
-- Specific error codes and messages help identify configuration issues
-- Console logging includes context (address, offset, iteration count)
+Default security headers are configured:
+- Content-Security-Policy protects against XSS
+- CORS configured for API endpoints
+- Static assets have 1-year cache
 
-### API Response Validation
+### File Upload
 
-- Strict validation of asset objects to prevent processing malformed data
-- Pagination logic includes safety checks and iteration limits
-- Empty response handling prevents infinite loops
+- Upload size limit: 8MB (configured in multer)
+- Allowed file types: images (jpg, png, webp), videos, audio
+- Files validated before processing
 
-### Security Enhancements
+## Performance Optimization
 
-- CORS configuration with origin whitelisting (development and preview domains)
-- Security headers added (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
-- Environment variable validation with meaningful error messages
+### Caching Strategy
 
-### Pagination Robustness
+- **Static assets** (`/assets/*`): 1 year cache (immutable)
+- **HTML/App**: No cache (must revalidate)
+- **API responses**: Cache control per endpoint
 
-- Maximum iteration limit (50) prevents accidental infinite loops
-- Empty asset response detection stops pagination gracefully
-- Detailed logging for debugging pagination issues
+### Build Optimization
 
-## Support
+- Client build: Vite with code splitting
+- Tree-shaking: Unused code removed
+- Minification: Automatic via Vite
 
-For issues with Story Protocol API:
+## Monitoring & Logs
 
-- Contact Story Protocol support
-- Check Story API documentation at https://api.storyapis.com
-- Verify API key is valid and has proper permissions
+### View Deployment Logs
 
-For Vercel deployment issues:
+```bash
+# Using Vercel CLI
+vercel logs [deployment-url]
 
-- Check Vercel documentation: https://vercel.com/docs
-- Use Vercel Support for account/deployment issues
-- Review build logs in Vercel dashboard
+# Or in dashboard:
+# Deployments → Click deployment → Logs tab
+```
 
-For IP Assistant specific issues:
+### Common Log Entries
 
-- Check DEPLOYMENT_GUIDE.md (this file) for configuration
-- Review server logs: `vercel logs`
-- Check browser console for client-side errors
+- `BUILD: npm run build` - Build process
+- `Deployed successfully` - Deployment complete
+- `Error: STORY_API_KEY not found` - Missing environment variable
+
+## Support & Resources
+
+### Story Protocol
+- API Documentation: https://api.storyapis.com
+- Support: Story Protocol support team
+
+### Vercel
+- Documentation: https://vercel.com/docs
+- Deployment Guide: https://vercel.com/docs/deployments/overview
+- CLI Reference: https://vercel.com/docs/cli
+
+### Privy Authentication
+- Docs: https://docs.privy.io
+- Support: Privy support team
+
+### OpenAI
+- API Reference: https://platform.openai.com/docs
+- Status: https://status.openai.com
+
+## FAQ
+
+**Q: How do I update the API keys after deployment?**
+A: Edit environment variables in Vercel Settings → Environment Variables, then redeploy.
+
+**Q: Can I use different API keys for Preview vs Production?**
+A: Yes, set different values for each environment in Vercel settings.
+
+**Q: How long does deployment take?**
+A: Typically 2-5 minutes. Check Deployments tab for status.
+
+**Q: What if the build is stuck?**
+A: Cancel the deployment and check the build logs for errors.
+
+**Q: How do I rollback to a previous version?**
+A: Go to Deployments → Click previous deployment → Click "Redeploy"
