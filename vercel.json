@@ -1,21 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "builds": [
-    {
-      "src": "dist/spa",
-      "use": "@vercel/static",
-      "config": {
-        "maxAge": "1y",
-        "cleanUrls": true,
-        "trailingSlash": false
-      }
-    },
-    {
-      "src": "api/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
+  "outputDirectory": "dist/spa",
   "routes": [
     {
       "src": "/api/(.*)",
