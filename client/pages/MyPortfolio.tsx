@@ -51,20 +51,19 @@ const MyPortfolio = () => {
 
         if (!assetsResponse.ok) {
           const errorData = await assetsResponse.json();
-          throw new Error(
-            errorData.message || "Failed to fetch IP assets"
-          );
+          throw new Error(errorData.message || "Failed to fetch IP assets");
         }
 
         const assetsData = await assetsResponse.json();
         setIpAssets(assetsData.results || []);
 
         // Fetch token balance using Story Protocol RPC
-        const rpcUrl = process.env.VITE_PUBLIC_STORY_RPC || "https://aeneid.storyrpc.io";
-        
+        const rpcUrl =
+          process.env.VITE_PUBLIC_STORY_RPC || "https://aeneid.storyrpc.io";
+
         // WIP Token address on Story Protocol
         const wipTokenAddress = "0x91ecf2d7f0b1bad77592f90a5f46a5e7fef5e7f2";
-        
+
         // ERC20 ABI for balanceOf
         const abi = [
           {
@@ -141,7 +140,7 @@ const MyPortfolio = () => {
       } catch (err) {
         console.error("Error fetching portfolio data:", err);
         setError(
-          err instanceof Error ? err.message : "Failed to load portfolio data"
+          err instanceof Error ? err.message : "Failed to load portfolio data",
         );
       } finally {
         setLoading(false);
@@ -182,8 +181,8 @@ const MyPortfolio = () => {
                 Connect Your Wallet
               </h2>
               <p className="text-slate-300 text-sm sm:text-base max-w-md">
-                Please connect your wallet to view your portfolio, including your token
-                balance and IP assets.
+                Please connect your wallet to view your portfolio, including
+                your token balance and IP assets.
               </p>
             </div>
           </div>
@@ -255,7 +254,10 @@ const MyPortfolio = () => {
                   <Loader className="h-8 w-8 animate-spin" />
                 ) : tokenBalance ? (
                   <>
-                    {tokenBalance.formatted} <span className="text-xl text-[#FF4DA6]">{tokenBalance.symbol}</span>
+                    {tokenBalance.formatted}{" "}
+                    <span className="text-xl text-[#FF4DA6]">
+                      {tokenBalance.symbol}
+                    </span>
                   </>
                 ) : (
                   "0.00 WIP"
@@ -286,9 +288,12 @@ const MyPortfolio = () => {
           className="flex flex-col gap-4 flex-1"
         >
           <div>
-            <h2 className="text-xl font-bold text-white mb-2">Your IP Assets</h2>
+            <h2 className="text-xl font-bold text-white mb-2">
+              Your IP Assets
+            </h2>
             <p className="text-slate-400 text-sm">
-              You own {ipAssets.length} IP {ipAssets.length === 1 ? "asset" : "assets"}
+              You own {ipAssets.length} IP{" "}
+              {ipAssets.length === 1 ? "asset" : "assets"}
             </p>
           </div>
 
@@ -360,7 +365,10 @@ const MyPortfolio = () => {
                             onError={(e) => {
                               const img = e.target as HTMLImageElement;
                               const parent = img.parentElement;
-                              if (parent && parent.querySelector("img") === img) {
+                              if (
+                                parent &&
+                                parent.querySelector("img") === img
+                              ) {
                                 img.replaceWith(
                                   Object.assign(document.createElement("div"), {
                                     className:
@@ -460,7 +468,9 @@ const MyPortfolio = () => {
                   d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
                 />
               </svg>
-              <p className="text-slate-400 text-sm font-medium">No IP assets yet</p>
+              <p className="text-slate-400 text-sm font-medium">
+                No IP assets yet
+              </p>
               <p className="text-slate-500 text-xs mt-1">
                 Create or register your first IP asset to see it here
               </p>
